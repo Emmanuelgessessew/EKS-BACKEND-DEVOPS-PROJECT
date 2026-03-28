@@ -8,29 +8,47 @@ This project demonstrates real-world DevOps practices, including infrastructure 
 
 🏗️ Architecture
 
-Developer → GitHub Repo → CI/CD (GitHub Actions)
-                          ↓
-                   Terraform (IaC)
-                          ↓
-                   AWS Infrastructure
-                          ↓
-        ┌─────────────── VPC ───────────────┐
-        │                                   │
-        │        EKS Cluster                │
-        │   ┌───────────────┐               │
-        │   │ Node Group    │               │
-        │   │ (EC2 nodes)   │               │
-        │   └──────┬────────┘               │
-        │          │                        │
-        │   Kubernetes Deployment          │
-        │     (Flask Backend Pods)         │
-        │          │                        │
-        │   Service (LoadBalancer)         │
-        └──────────┼───────────────────────┘
-                   ↓
-            AWS Load Balancer
-                   ↓
-                Users
+```text
+🏗️ Architecture Flow
+
+Developer
+   │
+   ▼
+GitHub Repo
+   │
+   ▼
+CI/CD (GitHub Actions)
+   │
+   ▼
+Terraform (IaC)
+   │
+   ▼
+┌─────────────────────────── AWS Infrastructure ───────────────────────────┐
+│                                                                          │
+│  ┌────────────────────────────── VPC ─────────────────────────────────┐  │
+│  │                                                                    │  │
+│  │  ┌──────────────────────── EKS Cluster ─────────────────────────┐  │  │
+│  │  │                                                              │  │  │
+│  │  │  ┌────────────────────── Node Group ──────────────────────┐  │  │  │
+│  │  │  │                                                        │  │  │  │
+│  │  │  │  [ EC2 Nodes ]                                         │  │  │  │
+│  │  │  │                                                        │  │  │  │
+│  │  │  │  [ K8s Deployment (Flask Backend Pods) ]               │  │  │  │
+│  │  │  │                                                        │  │  │  │
+│  │  │  └────────────────────────────────────────────────────────┘  │  │  │
+│  │  │                                                              │  │  │
+│  │  │  [ Service (LoadBalancer) ]                                  │  │  │
+│  │  └──────┬───────────────────────────────────────────────────────┘  │  │
+│  │         │                                                          │  │
+│  └─────────┼──────────────────────────────────────────────────────────┘  │
+│            │                                                             │
+│            ▼                                                             │
+│  [ AWS Load Balancer ]                                                   │
+└────────────┬─────────────────────────────────────────────────────────────┘
+             │
+             ▼
+          Users
+
 
 ⚙️ Tech Stack
  
