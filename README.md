@@ -5,51 +5,6 @@
 Designed and implemented an end-to-end cloud-native DevOps pipeline on AWS, leveraging Terraform for infrastructure provisioning and GitHub Actions for CI/CD automation to deploy a containerised backend application on Kubernetes (EKS).
 
 This project demonstrates real-world DevOps practices, including infrastructure automation, Kubernetes orchestration, and pipeline-driven deployments.
-
-🏗️ Architecture
-
-```text
-🏗️ Architecture Flow
-
-Developer
-   │
-   ▼
-GitHub Repo
-   │
-   ▼
-CI/CD (GitHub Actions)
-   │
-   ▼
-Terraform (IaC)
-   │
-   ▼
-┌─────────────────────────── AWS Infrastructure ───────────────────────────┐
-│                                                                          │
-│  ┌────────────────────────────── VPC ─────────────────────────────────┐  │
-│  │                                                                    │  │
-│  │  ┌──────────────────────── EKS Cluster ─────────────────────────┐  │  │
-│  │  │                                                              │  │  │
-│  │  │  ┌────────────────────── Node Group ──────────────────────┐  │  │  │
-│  │  │  │                                                        │  │  │  │
-│  │  │  │  [ EC2 Nodes ]                                         │  │  │  │
-│  │  │  │                                                        │  │  │  │
-│  │  │  │  [ K8s Deployment (Flask Backend Pods) ]               │  │  │  │
-│  │  │  │                                                        │  │  │  │
-│  │  │  └────────────────────────────────────────────────────────┘  │  │  │
-│  │  │                                                              │  │  │
-│  │  │  [ Service (LoadBalancer) ]                                  │  │  │
-│  │  └──────┬───────────────────────────────────────────────────────┘  │  │
-│  │         │                                                          │  │
-│  └─────────┼──────────────────────────────────────────────────────────┘  │
-│            │                                                             │
-│            ▼                                                             │
-│  [ AWS Load Balancer ]                                                   │
-└────────────┬─────────────────────────────────────────────────────────────┘
-             │
-             ▼
-          Users
-
-
 ⚙️ Tech Stack
  
 | Category      | Technology               |
@@ -121,3 +76,47 @@ Add security scanning (e.g., Trivy) in CI pipeline
 Implement monitoring (Prometheus + Grafana)
 Use Helm for scalable Kubernetes deployments
 Introduce GitOps (ArgoCD)
+
+🏗️ Architecture
+
+```text
+🏗️ Architecture Flow
+
+Developer
+   │
+   ▼
+GitHub Repo
+   │
+   ▼
+CI/CD (GitHub Actions)
+   │
+   ▼
+Terraform (IaC)
+   │
+   ▼
+┌─────────────────────────── AWS Infrastructure ───────────────────────────┐
+│                                                                          │
+│  ┌────────────────────────────── VPC ─────────────────────────────────┐  │
+│  │                                                                    │  │
+│  │  ┌──────────────────────── EKS Cluster ─────────────────────────┐  │  │
+│  │  │                                                              │  │  │
+│  │  │  ┌────────────────────── Node Group ──────────────────────┐  │  │  │
+│  │  │  │                                                        │  │  │  │
+│  │  │  │  [ EC2 Nodes ]                                         │  │  │  │
+│  │  │  │                                                        │  │  │  │
+│  │  │  │  [ K8s Deployment (Flask Backend Pods) ]               │  │  │  │
+│  │  │  │                                                        │  │  │  │
+│  │  │  └────────────────────────────────────────────────────────┘  │  │  │
+│  │  │                                                              │  │  │
+│  │  │  [ Service (LoadBalancer) ]                                  │  │  │
+│  │  └──────┬───────────────────────────────────────────────────────┘  │  │
+│  │         │                                                          │  │
+│  └─────────┼──────────────────────────────────────────────────────────┘  │
+│            │                                                             │
+│            ▼                                                             │
+│  [ AWS Load Balancer ]                                                   │
+└────────────┬─────────────────────────────────────────────────────────────┘
+             │
+             ▼
+          Users
+
