@@ -9,44 +9,32 @@ This project demonstrates real-world DevOps practices, including infrastructure 
 🏗️ Architecture
 
 
+```mermaid
+flowchart TD
+    Dev[Developer] -->|Push Code| Repo[GitHub Repo]
+    Repo -->|Trigger| CI[CI/CD: GitHub Actions]
+    CI -->|Apply| TF[Terraform: IaC]
 
-                       Developer
-                           │
-                           ▼
-                     GitHub Repo
-                          │
-                          ▼
-               CI/CD (GitHub Actions)
-                          │
-                          ▼
-                  Terraform (IaC)
-                          │
-                          ▼
-┌─────────────────────────── AWS Infrastructure ───────────────────────────┐
-│                                                                          │
-│  ┌────────────────────────────── VPC ─────────────────────────────────┐  │
-│  │                                                                    │  │
-│  │  ┌──────────────────────── EKS Cluster ─────────────────────────┐  │  │
-│  │  │                                                              │  │  │
-│  │  │  ┌────────────────────── Node Group ──────────────────────┐  │  │  │
-│  │  │  │                                                        │  │  │  │
-│  │  │  │  [ EC2 Nodes ]                                         │  │  │  │
-│  │  │  │                                                        │  │  │  │
-│  │  │  │  [ K8s Deployment (Flask Backend Pods) ]               │  │  │  │
-│  │  │  │                                                        │  │  │  │
-│  │  │  └────────────────────────────────────────────────────────┘  │  │  │
-│  │  │                                                              │  │  │
-│  │  │  [ Service (LoadBalancer) ]                                  │  │  │
-│  │  └──────┬───────────────────────────────────────────────────────┘  │  │
-│  │         │                                                          │  │
-│  └─────────┼──────────────────────────────────────────────────────────┘  │
-│            │                                                             │
-│            ▼                                                             │
-│  [   AWS Load Balancer ]                                                   │
-└       ┬─────────────────────────────────────────────────────────────┘
-                               │
-                               ▼
-                             Users
+    TF -->|Provisions| AWS
+
+    subgraph AWS [AWS Infrastructure]
+        direction TB
+        subgraph VPC [VPC]
+            subgraph EKS [EKS Cluster]
+                subgraph NG [Node Group]
+                    EC2[EC2 Nodes]
+                    Pods[K8s Deployment: Flask Backend Pods]
+                end
+                Svc[Service: LoadBalancer]
+            end
+            ALB[AWS Load Balancer]
+        end
+    end
+
+    Pods <--> Svc
+    Svc <-->|Provisions/Routes| ALB
+    Users -->|Access| ALB
+```
 ⚙️ Tech Stack
  
 | Category      | Technology               |
