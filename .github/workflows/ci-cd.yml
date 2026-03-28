@@ -43,3 +43,12 @@ jobs:
       - run: terraform -chdir=terraform plan
 
       - run: terraform -chdir=terraform apply -auto-approve
+
+      - run: terraform -chdir=terraform apply -auto-approve
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --region eu-west-2 --name nextwork-eks-cluster
+
+      - name: Deploy Application to EKS
+        run: |
+          kubectl apply -f kubernetes/deployment.yaml
+          kubectl apply -f kubernetes/service.yaml
