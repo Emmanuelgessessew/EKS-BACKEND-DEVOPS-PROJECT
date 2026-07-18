@@ -9,57 +9,66 @@ This project demonstrates real-world DevOps practices, including infrastructure 
 🏗️ Architecture
 
 flowchart TB
-    Developer[Developer] -->|Push code or manually trigger| GitHub[GitHub Repository]
-    GitHub --> Actions[GitHub Actions CI/CD]
 
-    Actions -->|terraform init, plan and apply| Terraform[Terraform]
-    Actions -->|kubectl apply| Kubernetes[Kubernetes Manifests]
+    Developer[Developer]
+    GitHub[GitHub Repository]
+    Actions[GitHub Actions CI/CD]
+    Terraform[Terraform]
+    Manifests[Kubernetes Manifests]
+    User[Internet User]
 
-    subgraph AWS[AWS Cloud]
-        direction TB
+    Developer -->|Push code or manual trigger| GitHub
+    GitHub --> Actions
+    Actions -->|Terraform init plan apply| Terraform
+    Actions -->|kubectl apply| Manifests
 
-        ECR[Amazon ECR<br/>Flask container image]
+    subgraph AWS["AWS Cloud"]
 
-        subgraph VPC[VPC 10.0.0.0/16]
-            direction TB
+        ECR["Amazon ECR<br/>Flask container image"]
 
-            IGW[Internet Gateway]
+        ControlPlane["Amazon EKS<br/>Managed control plane"]
 
-            subgraph Public[Public Subnets<br/>eu-west-2a and eu-west-2b]
-                LB[AWS Load Balancer]
-                NAT[NAT Gateway]
+        subgraph VPC["VPC 10.0.0.0/16"]
+
+            IGW["Internet Gateway"]
+
+            subgraph Public["Public Subnets<br/>eu-west-2a and eu-west-2b"]
+                LB["AWS Load Balancer"]
+                NAT["NAT Gateway"]
             end
 
-            subgraph Private[Private Subnets<br/>eu-west-2a and eu-west-2b]
-                subgraph EKS[Amazon EKS]
-                    ControlPlane[EKS Managed Control Plane]
+            subgraph Private["Private Subnets<br/>eu-west-2a and eu-west-2b"]
 
-                    subgraph NodeGroup[Managed Node Group]
-                        Node1[EC2 Worker Node 1]
-                        Node2[EC2 Worker Node 2]
-
-                        Pods[Flask Backend Pods<br/>3 replicas]
-                    end
-
-                    Service[Kubernetes Service<br/>Type: LoadBalancer<br/>Port 80 → 5000]
+                subgraph NodeGroup["EKS Managed Node Group"]
+                    Node1["EC2 Worker Node 1"]
+                    Node2["EC2 Worker Node 2"]
+                    Pods["Flask Backend Pods<br/>3 replicas"]
                 end
+
+                Service["Kubernetes Service<br/>Type LoadBalancer<br/>Port 80 to 5000"]
             end
         end
     end
 
-    Terraform -->|Creates VPC, subnets, NAT and EKS| VPC
-    Kubernetes -->|Creates deployment and service| EKS
+    Terraform -->|Creates AWS infrastructure| IGW
+    Terraform -->|Creates EKS cluster| ControlPlane
 
-    User[Internet User] -->|HTTP request| IGW
-    IGW --> LB
-    LB --> Service
-    Service --> Pods
+    Manifests -->|Creates deployment and service| Service
+    ControlPlane -->|Manages worker nodes and workloads| NodeGroup
 
     Node1 --> Pods
     Node2 --> Pods
 
-    Pods -->|Pull container image| ECR
-    Private -->|Outbound internet traffic| NAT
+    Node1 -->|Pulls image| ECR
+    Node2 -->|Pulls image| ECR
+
+    User -->|HTTP request| IGW
+    IGW --> LB
+    LB --> Service
+    Service --> Pods
+
+    Node1 -->|Outbound traffic| NAT
+    Node2 -->|Outbound traffic| NAT
     NAT --> IGW
 ⚙️ Tech Stack
  
