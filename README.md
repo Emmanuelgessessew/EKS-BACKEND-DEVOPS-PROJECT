@@ -126,11 +126,12 @@ Provisioned entirely via Terraform:
 
 🧠 Key Achievements
 
-    Built a production-style DevOps pipeline from scratch
-    Automated AWS infrastructure provisioning using Terraform
-    Successfully deployed and exposed a Kubernetes-based application
-    Resolved real-world issues (IAM auth, kubeconfig, service exposure)
-    Integrated CI/CD workflows for infrastructure lifecycle management
+* Designed and provisioned AWS cloud infrastructure using Terraform, including a VPC, public and private subnets, NAT Gateway, and an Amazon EKS cluster.
+* Built an automated Infrastructure as Code (IaC) deployment pipeline using GitHub Actions and Terraform.
+* Deployed a highly available Flask backend to Amazon EKS with multiple replicas behind a Kubernetes LoadBalancer Service.
+* Implemented a production-style network architecture by separating public and private subnets and automating infrastructure provisioning.
+* Troubleshot and resolved infrastructure issues involving IAM authentication, kubeconfig configuration, Kubernetes deployment, and external service connectivity.
+* Automated the end-to-end infrastructure provisioning and application deployment workflow, improving consistency and reducing manual configuration.
 
 🧹 Cleanup Strategy
 
