@@ -8,6 +8,9 @@ This project demonstrates real-world DevOps practices, including infrastructure 
 
 🏗️ Architecture
 
+## Architecture
+
+```mermaid
 flowchart TB
 
     Developer[Developer]
@@ -25,7 +28,6 @@ flowchart TB
     subgraph AWS["AWS Cloud"]
 
         ECR["Amazon ECR<br/>Flask container image"]
-
         ControlPlane["Amazon EKS<br/>Managed control plane"]
 
         subgraph VPC["VPC 10.0.0.0/16"]
@@ -54,7 +56,7 @@ flowchart TB
     Terraform -->|Creates EKS cluster| ControlPlane
 
     Manifests -->|Creates deployment and service| Service
-    ControlPlane -->|Manages worker nodes and workloads| NodeGroup
+    ControlPlane -->|Manages worker nodes| NodeGroup
 
     Node1 --> Pods
     Node2 --> Pods
@@ -70,6 +72,7 @@ flowchart TB
     Node1 -->|Outbound traffic| NAT
     Node2 -->|Outbound traffic| NAT
     NAT --> IGW
+```
 ⚙️ Tech Stack
  
 | Category      | Technology               |
