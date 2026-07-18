@@ -2,18 +2,44 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend-deployment
+
 spec:
   replicas: 3
+
   selector:
     matchLabels:
       app: backend
+
   template:
     metadata:
       labels:
         app: backend
+
     spec:
       containers:
         - name: backend
           image: 851725396275.dkr.ecr.eu-west-2.amazonaws.com/nextwork-flask-backend:latest
           ports:
             - containerPort: 5000
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
