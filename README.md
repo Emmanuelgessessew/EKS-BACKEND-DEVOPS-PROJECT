@@ -8,33 +8,59 @@ This project demonstrates real-world DevOps practices, including infrastructure 
 
 🏗️ Architecture
 
+flowchart TB
+    Developer[Developer] -->|Push code or manually trigger| GitHub[GitHub Repository]
+    GitHub --> Actions[GitHub Actions CI/CD]
 
-```mermaid
-flowchart TD
-    Dev[Developer] -->|Push Code| Repo[GitHub Repo]
-    Repo -->|Trigger| CI[CI/CD: GitHub Actions]
-    CI -->|Apply| TF[Terraform: IaC]
+    Actions -->|terraform init, plan and apply| Terraform[Terraform]
+    Actions -->|kubectl apply| Kubernetes[Kubernetes Manifests]
 
-    TF -->|Provisions| AWS
-
-    subgraph AWS [AWS Infrastructure]
+    subgraph AWS[AWS Cloud]
         direction TB
-        subgraph VPC [VPC]
-            subgraph EKS [EKS Cluster]
-                subgraph NG [Node Group]
-                    EC2[EC2 Nodes]
-                    Pods[K8s Deployment: Flask Backend Pods]
-                end
-                Svc[Service: LoadBalancer]
+
+        ECR[Amazon ECR<br/>Flask container image]
+
+        subgraph VPC[VPC 10.0.0.0/16]
+            direction TB
+
+            IGW[Internet Gateway]
+
+            subgraph Public[Public Subnets<br/>eu-west-2a and eu-west-2b]
+                LB[AWS Load Balancer]
+                NAT[NAT Gateway]
             end
-            ALB[AWS Load Balancer]
+
+            subgraph Private[Private Subnets<br/>eu-west-2a and eu-west-2b]
+                subgraph EKS[Amazon EKS]
+                    ControlPlane[EKS Managed Control Plane]
+
+                    subgraph NodeGroup[Managed Node Group]
+                        Node1[EC2 Worker Node 1]
+                        Node2[EC2 Worker Node 2]
+
+                        Pods[Flask Backend Pods<br/>3 replicas]
+                    end
+
+                    Service[Kubernetes Service<br/>Type: LoadBalancer<br/>Port 80 → 5000]
+                end
+            end
         end
     end
 
-    Pods <--> Svc
-    Svc <-->|Provisions/Routes| ALB
-    Users -->|Access| ALB
-```
+    Terraform -->|Creates VPC, subnets, NAT and EKS| VPC
+    Kubernetes -->|Creates deployment and service| EKS
+
+    User[Internet User] -->|HTTP request| IGW
+    IGW --> LB
+    LB --> Service
+    Service --> Pods
+
+    Node1 --> Pods
+    Node2 --> Pods
+
+    Pods -->|Pull container image| ECR
+    Private -->|Outbound internet traffic| NAT
+    NAT --> IGW
 ⚙️ Tech Stack
  
 | Category      | Technology               |
